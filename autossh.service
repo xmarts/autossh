@@ -1,0 +1,34 @@
+[Unit]
+Description=Keeps a tunnel to 'remote.example.com' open
+After=network-online.target
+
+[Service]
+User=tunel
+#ISTALLL 
+# sudo mv autossh.service /etc/systemd/system/
+# sudo systemctl enable autossh.service
+# sudo apt install autossh
+# sudo adduser --home /var/lib/tunel  tunel
+# sudo scp  /var/lib/tunel/.ssh/id_rsa.pub tunel@74.208.65.34:/tmp/
+# ssh tunel@74.208.65.34 -p 6969  'cat /tmp/id_rsa.pub >> /home/tunel/.ssh/authorized_keys'
+# sudo su - tunel 
+# ssh -p 6969 tunel@74.208.65.34  ls
+# exit 
+# sudo systemctl start autossh.service 
+
+Environment=HOSTTUNEL=74.208.65.34
+Environment=USERTUNEL=tunel
+Environment=PORTSERVER=6969
+Environment=REMOTE_PORT=2290
+Environment=LOCAL_PORT=22
+
+# -p [PORT]
+# -lN Just open the connection and do nothing (not interactive)
+# LOCALPORT:IP_ON_EXAMPLE_COM:PORT_ON_EXAMPLE_COM
+# ExecStart=/usr/bin/autossh -M 0 -N -q -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -p ${PORTSERVER} -l ${USERTUNEL} ${HOSTTUNEL} -R 0.0.0.0:${REMOTE_PORT}:localhost:${LOCAL_PORT} -i //var/lib/tunel/.ssh/id_rsa
+
+ExecStart=/usr/bin/autossh -M 0 -N -q -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -p ${PORTSERVER}  ${USERTUNEL}@${HOSTTUNEL} -R 0.0.0.0:${REMOTE_PORT}:localhost:${LOCAL_PORT} -i /var/lib/tunel/.ssh/id_rsa
+
+
+[Install]
+WantedBy=multi-user.targetsudo sudo systemctl enable autossh.service
